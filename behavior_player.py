@@ -12,9 +12,12 @@ async def main():
 
     idle = behavior.Idle(name='idle', reachy=reachy)
     look_at = behavior.LookAt(name='look_at', reachy=reachy)
+    look_hand = behavior.LookHand(name='look_hand', reachy=reachy)
     face_tracking = behavior.FaceTracking(name='face_tracking', reachy=reachy)
+    lonely = behavior.Lonely(name='lonely', reachy=reachy)
+    scratch = behavior.Scratch(name='scratch', reachy=reachy)
 
-    t = await face_tracking.start()
+    t = await idle.start()
     await t
 
 
