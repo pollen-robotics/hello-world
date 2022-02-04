@@ -65,9 +65,9 @@ class Popote(Behavior):
         self.sampling_frequency = 100
 
         self.recorded_joints_head = [
-            self.reachy.joints.neck_disk_top,
-            self.reachy.joints.neck_disk_middle,
-            self.reachy.joints.neck_disk_bottom,
+            self.reachy.joints.neck_yaw,
+            self.reachy.joints.neck_roll,
+            self.reachy.joints.neck_pitch,
         ]
 
         self.recorded_joints_right = [
@@ -124,7 +124,237 @@ class LookAt(Behavior):
         await self.reachy.head.look_at_async(x=0.5, y=0.3, z=-0.3, duration=1.1)
         await asyncio.sleep(0.2)
         await self.reachy.head.look_at_async(x=0.5, y=0, z=0, duration=1.1)
+    
+class LookAt2(Behavior):
+    def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        super().__init__(name, reachy, sub_behavior=sub_behavior)
 
+        self.look_at = np.load('movements/look_at2.npy')
+
+        self.sampling_frequency = 100
+
+        self.recorded_joints = [
+            self.reachy.head.neck_roll,
+            self.reachy.head.neck_pitch,
+            self.reachy.head.neck_yaw,
+        ]
+
+    async def run(self):
+        for j in self.reachy.r_arm.joints.values():
+            j.torque_limit = 0.0
+        for j in self.reachy.l_arm.joints.values():
+            j.torque_limit = 0.0
+
+        first_point = dict(zip(self.recorded_joints, self.look_at[0]))
+        # Goes to the start of the trajectory in 3s
+        await goto_async(first_point, duration=1.0)
+
+        for jp_head in self.look_at:
+            for joint, pos in zip(self.recorded_joints, jp_head):
+                joint.goal_position = pos
+
+            await asyncio.sleep(1 / (self.sampling_frequency))
+
+    async def teardown(self):
+        return await super().teardown()
+
+class LookAt3(Behavior):
+    def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        super().__init__(name, reachy, sub_behavior=sub_behavior)
+
+        self.look_at = np.load('movements/look_at3.npy')
+
+        self.sampling_frequency = 100
+
+        self.recorded_joints = [
+            self.reachy.head.neck_roll,
+            self.reachy.head.neck_pitch,
+            self.reachy.head.neck_yaw,
+        ]
+
+    async def run(self):
+        for j in self.reachy.r_arm.joints.values():
+            j.torque_limit = 0.0
+        for j in self.reachy.l_arm.joints.values():
+            j.torque_limit = 0.0
+
+        first_point = dict(zip(self.recorded_joints, self.look_at[0]))
+        # Goes to the start of the trajectory in 3s
+        await goto_async(first_point, duration=1.0)
+
+        for jp_head in self.look_at:
+            for joint, pos in zip(self.recorded_joints, jp_head):
+                joint.goal_position = pos
+
+            await asyncio.sleep(1 / (self.sampling_frequency))
+
+    async def teardown(self):
+        return await super().teardown()
+
+class LookAt4(Behavior):
+    def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        super().__init__(name, reachy, sub_behavior=sub_behavior)
+
+        self.look_at = np.load('movements/look_at4.npy')
+
+        self.sampling_frequency = 100
+
+        self.recorded_joints = [
+            self.reachy.head.neck_roll,
+            self.reachy.head.neck_pitch,
+            self.reachy.head.neck_yaw,
+        ]
+
+    async def run(self):
+        for j in self.reachy.r_arm.joints.values():
+            j.torque_limit = 0.0
+        for j in self.reachy.l_arm.joints.values():
+            j.torque_limit = 0.0
+
+        first_point = dict(zip(self.recorded_joints, self.look_at[0]))
+        # Goes to the start of the trajectory in 3s
+        await goto_async(first_point, duration=1.0)
+
+        for jp_head in self.look_at:
+            for joint, pos in zip(self.recorded_joints, jp_head):
+                joint.goal_position = pos
+
+            await asyncio.sleep(1 / (self.sampling_frequency))
+
+    async def teardown(self):
+        return await super().teardown()
+
+class LookAt5(Behavior):
+    def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        super().__init__(name, reachy, sub_behavior=sub_behavior)
+
+        self.look_at = np.load('movements/look_at5.npy')
+
+        self.sampling_frequency = 100
+
+        self.recorded_joints = [
+            self.reachy.head.neck_roll,
+            self.reachy.head.neck_pitch,
+            self.reachy.head.neck_yaw,
+        ]
+
+    async def run(self):
+        for j in self.reachy.r_arm.joints.values():
+            j.torque_limit = 0.0
+        for j in self.reachy.l_arm.joints.values():
+            j.torque_limit = 0.0
+
+        first_point = dict(zip(self.recorded_joints, self.look_at[0]))
+        # Goes to the start of the trajectory in 3s
+        await goto_async(first_point, duration=1.0)
+
+        for jp_head in self.look_at:
+            for joint, pos in zip(self.recorded_joints, jp_head):
+                joint.goal_position = pos
+
+            await asyncio.sleep(1 / (self.sampling_frequency))
+
+    async def teardown(self):
+        return await super().teardown()
+
+class LookAt6(Behavior):
+    def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        super().__init__(name, reachy, sub_behavior=sub_behavior)
+
+        self.look_at = np.load('movements/look_at6.npy')
+
+        self.sampling_frequency = 100
+
+        self.recorded_joints = [
+            self.reachy.head.neck_roll,
+            self.reachy.head.neck_pitch,
+            self.reachy.head.neck_yaw,
+        ]
+
+    async def run(self):
+        for j in self.reachy.r_arm.joints.values():
+            j.torque_limit = 0.0
+        for j in self.reachy.l_arm.joints.values():
+            j.torque_limit = 0.0
+
+        first_point = dict(zip(self.recorded_joints, self.look_at[0]))
+        # Goes to the start of the trajectory in 3s
+        await goto_async(first_point, duration=1.0)
+
+        for jp_head in self.look_at:
+            for joint, pos in zip(self.recorded_joints, jp_head):
+                joint.goal_position = pos
+
+            await asyncio.sleep(1 / (self.sampling_frequency))
+
+    async def teardown(self):
+        return await super().teardown()
+
+class LookAt7(Behavior):
+    def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        super().__init__(name, reachy, sub_behavior=sub_behavior)
+
+        self.look_at = np.load('movements/look_at7.npy')
+
+        self.sampling_frequency = 100
+
+        self.recorded_joints = [
+            self.reachy.head.neck_roll,
+            self.reachy.head.neck_pitch,
+            self.reachy.head.neck_yaw,
+        ]
+
+    async def run(self):
+        for j in self.reachy.r_arm.joints.values():
+            j.torque_limit = 0.0
+        for j in self.reachy.l_arm.joints.values():
+            j.torque_limit = 0.0
+
+        first_point = dict(zip(self.recorded_joints, self.look_at[0]))
+        # Goes to the start of the trajectory in 3s
+        await goto_async(first_point, duration=1.0)
+
+        for jp_head in self.look_at:
+            for joint, pos in zip(self.recorded_joints, jp_head):
+                joint.goal_position = pos
+
+            await asyncio.sleep(1 / (self.sampling_frequency))
+
+    async def teardown(self):
+        return await super().teardown()
+
+class LookAt8(Behavior):
+    def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        super().__init__(name, reachy, sub_behavior=sub_behavior)
+
+        self.look_at = np.load('movements/look_at8.npy')
+
+        self.sampling_frequency = 100
+
+        self.recorded_joints = [
+            self.reachy.head.neck_roll,
+            self.reachy.head.neck_pitch,
+            self.reachy.head.neck_yaw,
+        ]
+
+    async def run(self):
+        for j in self.reachy.r_arm.joints.values():
+            j.torque_limit = 0.0
+        for j in self.reachy.l_arm.joints.values():
+            j.torque_limit = 0.0
+
+        first_point = dict(zip(self.recorded_joints, self.look_at[0]))
+        # Goes to the start of the trajectory in 3s
+        await goto_async(first_point, duration=1.0)
+
+        for jp_head in self.look_at:
+            for joint, pos in zip(self.recorded_joints, jp_head):
+                joint.goal_position = pos
+
+            await asyncio.sleep(1 / (self.sampling_frequency))
+
+    async def teardown(self):
+        return await super().teardown()
 
 class LookHand(Behavior):
     async def run(self):
@@ -290,6 +520,8 @@ class Scratch(Behavior):
     async def run(self):
         for j in self.reachy.r_arm.joints.values():
             j.torque_limit = 100.0
+        for j in self.reachy.l_arm.joints.values():
+            j.torque_limit = 100.0
 
         look_down = self.reachy.head.look_at_async(0.5, -0.1, -0.5, duration=1.0)
 
@@ -361,15 +593,347 @@ class Scratch(Behavior):
         return await super().teardown()
 
 
+class Scratch2(Behavior):
+    def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        super().__init__(name, reachy, sub_behavior=sub_behavior)
+
+        self.scratch_shoulder = np.load('movements/scratch_shoulder.npy')
+
+        self.sampling_frequency = 100
+
+        self.recorded_joints = [
+            self.reachy.r_arm.r_shoulder_pitch,
+            self.reachy.r_arm.r_shoulder_roll,
+            self.reachy.r_arm.r_arm_yaw,
+            self.reachy.r_arm.r_elbow_pitch,
+            self.reachy.r_arm.r_forearm_yaw,
+            self.reachy.r_arm.r_wrist_pitch,
+            self.reachy.r_arm.r_wrist_roll,
+        ]
+
+    async def run(self):
+        for j in self.reachy.r_arm.joints.values():
+            j.torque_limit = 100.0
+        
+        for j in self.reachy.l_arm.joints.values():
+            j.torque_limit = 0.0
+
+        look_down = self.reachy.head.look_at_async(0.5, 0.1, -0.5, duration=1.5)
+
+        traj_antennas = goto_async(
+            goal_positions={
+                self.reachy.head.r_antenna: -5,
+                self.reachy.head.l_antenna: 15,
+            },
+            duration=2.0,
+            interpolation_mode=InterpolationMode.MINIMUM_JERK
+        )
+
+        first_point = dict(zip(self.recorded_joints, self.scratch_shoulder[220]))
+        # Goes to the start of the trajectory in 3s
+        first_pos = goto_async(first_point, duration=1.5)
+
+        await asyncio.gather(
+            look_down,
+            first_pos,
+            traj_antennas,
+        )
+
+        for jp_arms in self.scratch_shoulder[220:540]:
+            for joint, pos in zip(self.recorded_joints, jp_arms):
+                joint.goal_position = pos
+
+            await asyncio.sleep(1 / (self.sampling_frequency))
+
+        traj_antennas = goto_async(
+            goal_positions={
+                self.reachy.head.r_antenna: -0,
+                self.reachy.head.l_antenna: 0,
+            },
+            duration=1.0,
+            interpolation_mode=InterpolationMode.MINIMUM_JERK
+        )
+        back_head = self.reachy.head.look_at_async(0.5, -0.0, -0.0, duration=1.5)
+        base_pos_right = [-1.73, -3.67, -0.57, -68.44, 4.0, -29.67, -4.84, -47.14]
+        goto_dic = {j: pos for j, pos in zip(self.reachy.r_arm.joints.values(), base_pos_right)}
+        base_pos = goto_async(goal_positions=goto_dic, duration=1.5)
+
+        await asyncio.gather(
+            back_head,
+            base_pos,
+            traj_antennas,
+        )
+
+    async def teardown(self):
+        return await super().teardown()
+
+
+class Tshirt(Behavior):
+    def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        super().__init__(name, reachy, sub_behavior=sub_behavior)
+
+        self.touch_tshirt = np.load('movements/traj_tshirt.npy')
+
+        self.sampling_frequency = 100
+
+        self.recorded_joints = [
+            self.reachy.l_arm.l_shoulder_pitch,
+            self.reachy.l_arm.l_shoulder_roll,
+            self.reachy.l_arm.l_arm_yaw,
+            self.reachy.l_arm.l_elbow_pitch,
+            self.reachy.l_arm.l_forearm_yaw,
+            self.reachy.l_arm.l_wrist_pitch,
+            self.reachy.l_arm.l_wrist_roll,
+            self.reachy.l_arm.l_gripper,
+        ]
+
+    async def run(self):
+        for j in self.reachy.l_arm.joints.values():
+            j.torque_limit = 100.0
+
+        look_down = self.reachy.head.look_at_async(0.5, 0.2, -0.5, duration=0.8)
+
+        first_point = dict(zip(self.recorded_joints, self.touch_tshirt[0]))
+        # Goes to the start of the trajectory in 3s
+        first_pos = goto_async(first_point, duration=0.8)
+
+        await asyncio.gather(
+            look_down,
+            first_pos,
+        )
+
+        for jp_arms in self.touch_tshirt:
+            for joint, pos in zip(self.recorded_joints, jp_arms):
+                joint.goal_position = pos
+
+            await asyncio.sleep(1 / (self.sampling_frequency * 1.5))
+
+        pose_end_arm = [16.11, 7, -9.71, -84.62, 13.67, -5.14, -29.18]
+        goto_dic = {j: pos for j, pos in zip(self.reachy.l_arm.joints.values(), pose_end_arm)}
+        end_move = goto_async(goal_positions=goto_dic, duration=1.0, interpolation_mode=InterpolationMode.MINIMUM_JERK)
+
+        await asyncio.gather(
+            end_move,
+        )
+
+        await asyncio.sleep(0.3)
+
+    async def teardown(self):
+        return await super().teardown()
+
+
+class SweatHead(Behavior):
+    def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        super().__init__(name, reachy, sub_behavior=sub_behavior)
+
+        self.sweat_head = np.load('movements/sweat_head.npy')
+
+        self.sampling_frequency = 100
+
+        self.recorded_joints = [
+            self.reachy.l_arm.l_shoulder_pitch,
+            self.reachy.l_arm.l_shoulder_roll,
+            self.reachy.l_arm.l_arm_yaw,
+            self.reachy.l_arm.l_elbow_pitch,
+            self.reachy.l_arm.l_forearm_yaw,
+            self.reachy.l_arm.l_wrist_pitch,
+            self.reachy.l_arm.l_wrist_roll,
+        ]
+
+    async def run(self):
+        for j in self.reachy.r_arm.joints.values():
+            j.torque_limit = 0.0
+
+        for j in self.reachy.l_arm.joints.values():
+            j.torque_limit = 100.0
+
+        first_point = dict(zip(self.recorded_joints, self.sweat_head[0]))
+        # Goes to the start of the trajectory in 3s
+        await goto_async(first_point, duration=1.0)
+
+        look_down = self.reachy.head.look_at_async(0.5, -0.2, -0.4, duration=1.5)
+
+        traj_antennas = goto_async(
+            goal_positions={
+                self.reachy.head.r_antenna: -180,
+                self.reachy.head.l_antenna: 180,
+            },
+            duration=1.5,
+            interpolation_mode=InterpolationMode.MINIMUM_JERK
+        )
+
+        point110 = dict(zip(self.recorded_joints, self.sweat_head[300]))
+        # Goes to the start of the trajectory in 3s
+        first_pos = goto_async(point110, duration=1.5)
+
+        await asyncio.gather(
+            look_down,
+            first_pos,
+            traj_antennas,
+        )
+
+        for jp_arms in self.sweat_head[300:700]:
+            for joint, pos in zip(self.recorded_joints, jp_arms):
+                joint.goal_position = pos
+
+            await asyncio.sleep(1 / self.sampling_frequency)
+        
+
+        look_up = self.reachy.head.look_at_async(0.5, 0, 0, duration=1.0)
+
+        traj_antennas = goto_async(
+            goal_positions={
+                self.reachy.head.r_antenna: 0,
+                self.reachy.head.l_antenna: 0,
+            },
+            duration=2.0,
+            interpolation_mode=InterpolationMode.MINIMUM_JERK
+        )
+
+        point880 = dict(zip(self.recorded_joints, self.sweat_head[980]))
+        # Goes to the start of the trajectory in 3s
+        last_pos = goto_async(point880, duration=1.0)
+
+        await asyncio.gather(
+            look_up,
+            traj_antennas,
+            last_pos,
+        )
+
+    async def teardown(self):
+        return await super().teardown()
+
+
+class BeatRythmTable(Behavior):
+    def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        super().__init__(name, reachy, sub_behavior=sub_behavior)
+
+        self.beat_rythm_table = np.load('movements/beat_rythm_table.npy')
+        self.beat_rythm_head = np.load('movements/beat_rythm_head.npy')
+
+        self.sampling_frequency = 100
+
+        self.recorded_joints = [
+            self.reachy.r_arm.r_shoulder_pitch,
+            self.reachy.r_arm.r_shoulder_roll,
+            self.reachy.r_arm.r_arm_yaw,
+            self.reachy.r_arm.r_elbow_pitch,
+            self.reachy.r_arm.r_forearm_yaw,
+            self.reachy.r_arm.r_wrist_pitch,
+            self.reachy.r_arm.r_wrist_roll,
+        ]
+
+        self.recorded_head = [
+            self.reachy.head.neck_roll,
+            self.reachy.head.neck_pitch,
+            self.reachy.head.neck_yaw,
+        ]
+
+    async def run(self):
+        for j in self.reachy.r_arm.joints.values():
+            j.torque_limit = 100.0
+
+        for j in self.reachy.l_arm.joints.values():
+            j.torque_limit = 0.0
+
+        first_point = dict(zip(self.recorded_joints, self.beat_rythm_table[0]))
+        # Goes to the start of the trajectory in 1s
+        first_pos = goto_async(first_point, duration=1.0)
+
+        head_straight = self.reachy.head.look_at_async(0.5, 0, 0, duration=1.0)
+
+        await asyncio.gather(
+            head_straight,
+            first_pos,
+        )
+
+        for (jp_head, jp_arms) in zip(self.beat_rythm_head[60:], self.beat_rythm_table):
+            for joint, pos in zip(self.recorded_joints, jp_arms):
+                joint.goal_position = pos
+            for joint, pos in zip(self.recorded_head, jp_head):
+                joint.goal_position = pos
+
+            await asyncio.sleep(1 / self.sampling_frequency)
+        
+        await self.reachy.head.look_at_async(0.5, 0, 0, duration=1.5)
+        
+
+    async def teardown(self):
+        return await super().teardown()
+
+
+class StretchNeck(Behavior):
+    def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        super().__init__(name, reachy, sub_behavior=sub_behavior)
+
+        self.stretch_arm = np.load('movements/stretch_neck.npy')
+        self.stretch_head = np.load('movements/stretch_neck_head.npy')
+
+        self.sampling_frequency = 100
+
+        self.recorded_joints = [
+            self.reachy.l_arm.l_shoulder_pitch,
+            self.reachy.l_arm.l_shoulder_roll,
+            self.reachy.l_arm.l_arm_yaw,
+            self.reachy.l_arm.l_elbow_pitch,
+            self.reachy.l_arm.l_forearm_yaw,
+            self.reachy.l_arm.l_wrist_pitch,
+            self.reachy.l_arm.l_wrist_roll,
+        ]
+
+        self.recorded_head = [
+            self.reachy.head.neck_roll,
+            self.reachy.head.neck_pitch,
+            self.reachy.head.neck_yaw,
+        ]
+
+    async def run(self):
+        for j in self.reachy.r_arm.joints.values():
+            j.torque_limit = 0.0
+
+        for j in self.reachy.l_arm.joints.values():
+            j.torque_limit = 100.0
+
+        first_point = dict(zip(self.recorded_joints, self.stretch_arm[0]))
+        # Goes to the start of the trajectory in 1s
+        await goto_async(first_point, duration=1.0)
+
+        for (jp_head, jp_arms) in zip(self.stretch_head, self.stretch_arm):
+            for joint, pos in zip(self.recorded_joints, jp_arms):
+                joint.goal_position = pos
+            for joint, pos in zip(self.recorded_head, jp_head):
+                joint.goal_position = pos
+
+            await asyncio.sleep(1 / self.sampling_frequency)
+        
+        await self.reachy.head.look_at_async(0.5, 0, 0, duration=1.5)
+        
+
+    async def teardown(self):
+        return await super().teardown()
+
+
 class Idle(Behavior):
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
         super().__init__(name, reachy, sub_behavior=sub_behavior)
         self.behaviors = {
             'look_at': LookAt(name='look_at', reachy=self.reachy, sub_behavior=True),
-            'popote': Popote(name='popote', reachy=self.reachy, sub_behavior=True),
+            'look_at2': LookAt2(name='look_at2', reachy=self.reachy, sub_behavior=True),
+            'look_at3': LookAt3(name='look_at3', reachy=self.reachy, sub_behavior=True),
+            'look_at4': LookAt4(name='look_at4', reachy=self.reachy, sub_behavior=True),
+            'look_at5': LookAt5(name='look_at5', reachy=self.reachy, sub_behavior=True),
+            'look_at6': LookAt6(name='look_at6', reachy=self.reachy, sub_behavior=True),
+            'look_at7': LookAt7(name='look_at7', reachy=self.reachy, sub_behavior=True),
+            'look_at8': LookAt8(name='look_at8', reachy=self.reachy, sub_behavior=True),
+            # 'popote': Popote(name='popote', reachy=self.reachy, sub_behavior=True),
             'look_hand': LookHand(name='look_hand', reachy=self.reachy, sub_behavior=True),
             'lonely': Lonely(name='lonely', reachy=self.reachy, sub_behavior=True),
             'scratch' : Scratch(name='scratch', reachy=self.reachy, sub_behavior=True),
+            'tshirt' : Tshirt(name='tshirt', reachy=self.reachy, sub_behavior=True),
+            'sweat_head' : SweatHead(name='sweat_head', reachy=self.reachy, sub_behavior=True),
+            'beat_rythm_table' : BeatRythmTable(name='beat_rythm_table', reachy=self.reachy, sub_behavior=True),
+            'scratch2' : Scratch2(name='scratch2', reachy=self.reachy, sub_behavior=True),
+            'stretch_neck' : StretchNeck(name='stretch_neck', reachy=self.reachy, sub_behavior=True),
         }
 
     async def run(self):
