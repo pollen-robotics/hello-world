@@ -22,7 +22,14 @@ async def main():
     sweat_head = behavior.SweatHead(name='sweat_head', reachy=reachy)
     beat_rythm_table = behavior.BeatRythmTable(name='beat_rythm_table', reachy=reachy)
     stretch_neck = behavior.StretchNeck(name='stretch_neck', reachy=reachy)
-
+    scratch3 = behavior.Scratch3(name='scratch3', reachy=reachy)
+    touch_antenna = behavior.TouchAntenna(name='touch_antenna', reachy=reachy)
+    sneeze = behavior.Sneeze(name='sneeze', reachy=reachy)
+    whistle = behavior.Whistle(name='whistle', reachy=reachy)
+    wonder = behavior.Wonder(name='wonder', reachy=reachy)
+    sigh = behavior.Sigh(name='sigh', reachy=reachy)
+    clear_throat = behavior.ClearThroat(name='clear_throat', reachy=reachy)
+    blahblah = behavior.BlahBlah(name='blahblah', reachy=reachy)
 
     t = await idle.start()
     await t
