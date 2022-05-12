@@ -1,7 +1,7 @@
 import asyncio
 import numpy as np
 from playsound import playsound
-# import time
+import time
 from reachy_sdk.trajectory import goto_async
 from reachy_sdk.trajectory.interpolation import InterpolationMode
 
@@ -363,9 +363,18 @@ class LookHand(Behavior):
             j.torque_limit = 100.0
 
         base_pos_right = [-1.73, -3.67, -0.57, -68.44, 4.0, -29.67, -4.84]
-        goto_dic = {j: pos for j, pos in zip(self.reachy.r_arm.joints.values(), base_pos_right)}
-        await goto_async(goal_positions=goto_dic, duration=1.0)
-        await self.reachy.head.look_at_async(x=0.5, y=0.3, z=-0.3, duration=1.1)
+        # goto_dic = {j: pos for j, pos in zip(self.reachy.r_arm.joints.values(), base_pos_right)}
+        # await goto_async(goal_positions=goto_dic, duration=1.0)
+        # await self.reachy.head.look_at_async(
+        #     x=0.5,
+        #     y=0.3,
+        #     z=-0.3,
+        #     duration=1.1,
+        #     starting_positions={
+        #         self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+        #         self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+        #         self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+        #     })
 
         A = self.reachy.r_arm.forward_kinematics(joints_position=base_pos_right)
         
@@ -384,10 +393,19 @@ class LookHand(Behavior):
         
         traj_right = goto_async(
             goal_positions={j: p for j, p in zip(self.reachy.r_arm.joints.values(), JB[:-2])},
-            duration=1.5,
+            duration=2.0,
             interpolation_mode=InterpolationMode.MINIMUM_JERK,
         )
-        traj_head = self.reachy.head.look_at_async(x, y, z-0.1, duration=1)
+        traj_head = self.reachy.head.look_at_async(
+            x,
+            y,
+            z-0.1,
+            duration=1,
+            starting_positions={
+                self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+                self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+                self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+            })
 
         await asyncio.gather(
             traj_right,
@@ -395,7 +413,7 @@ class LookHand(Behavior):
         )
 
         s = 1
-        nb_iter = np.random.randint(0, 5)
+        nb_iter = np.random.randint(2, 5)
         for i in range(nb_iter):
             s = -s
             await goto_async(
@@ -404,7 +422,7 @@ class LookHand(Behavior):
             )
             await asyncio.sleep(0.1)
 
-        nb_iter = np.random.randint(0, 3)
+        nb_iter = np.random.randint(2, 3)
         for i in range(nb_iter):
             self.reachy.r_arm.r_gripper.goal_position = 50
             await asyncio.sleep(0.1)
@@ -413,11 +431,39 @@ class LookHand(Behavior):
         
         await asyncio.sleep(0.3)
 
+        look_back = self.reachy.head.look_at_async(
+            0.5,
+            0.0,
+            0.0,
+            duration=1.5,
+            starting_positions={
+                self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+                self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+                self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+            })
+        hand_back = goto_async(
+            {self.reachy.r_arm.r_shoulder_pitch: 0.0,
+            self.reachy.r_arm.r_shoulder_roll: 0.0,
+            self.reachy.r_arm.r_arm_yaw: 0.0,
+            self.reachy.r_arm.r_elbow_pitch: 0.0,
+            self.reachy.r_arm.r_forearm_yaw: 0.0,
+            self.reachy.r_arm.r_wrist_pitch: 0.0,
+            self.reachy.r_arm.r_wrist_roll: 0.0},
+            duration=2.0,
+        )
+
+        await asyncio.gather(
+            look_back,
+            hand_back,
+        )
+
+        self.reachy.turn_off_smoothly('r_arm')
+
 class Lonely(Behavior):
     async def run(self):
-        base_pos_right = [-1.73, -3.67, -0.57, -68.44, 4.0, -29.67, -4.84, -47.14]
-        goto_dic = {j: pos for j, pos in zip(self.reachy.r_arm.joints.values(), base_pos_right)}
-        arm_down = goto_async(goal_positions=goto_dic, duration=1.0)
+        # base_pos_right = [-1.73, -3.67, -0.57, -68.44, 4.0, -29.67, -4.84, -47.14]
+        # goto_dic = {j: pos for j, pos in zip(self.reachy.r_arm.joints.values(), base_pos_right)}
+        # arm_down = goto_async(goal_positions=goto_dic, duration=1.0)
         traj_antennas = goto_async(
             goal_positions={
                 self.reachy.head.r_antenna: -65,
@@ -426,8 +472,20 @@ class Lonely(Behavior):
             duration=1.0,
             interpolation_mode=InterpolationMode.MINIMUM_JERK
         )
-        first_look_at = self.reachy.head.look_at_async(x=0.5, y=-0.3, z=0.1, duration=1.1)
-        await asyncio.gather(arm_down, first_look_at, traj_antennas)
+        first_look_at = self.reachy.head.look_at_async(
+            x=0.5,
+            y=-0.3,
+            z=0.1,
+            duration=1.1,
+            interpolation_mode=InterpolationMode.MINIMUM_JERK,
+            starting_positions={
+                self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+                self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+                self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+                }
+            )
+        # await asyncio.gather(arm_down, first_look_at, traj_antennas)
+        await asyncio.gather(first_look_at, traj_antennas)
 
         for j in self.reachy.r_arm.joints.values():
             j.torque_limit = 0.0
@@ -442,7 +500,18 @@ class Lonely(Behavior):
             duration=1.0,
             interpolation_mode=InterpolationMode.MINIMUM_JERK
         )
-        look_at_right = self.reachy.head.look_at_async(x=0.5, y=-0.6, z=0.1, duration=1.0)
+        look_at_right = self.reachy.head.look_at_async(
+            x=0.5,
+            y=-0.6,
+            z=0.1,
+            duration=1.0,
+            interpolation_mode=InterpolationMode.MINIMUM_JERK,
+            starting_positions ={
+                self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+                self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+                self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+                }
+            )
         await asyncio.gather(traj_antennas, look_at_right)
         await asyncio.sleep(0.5)
 
@@ -454,7 +523,18 @@ class Lonely(Behavior):
             duration=0.7,
             interpolation_mode=InterpolationMode.MINIMUM_JERK
         )
-        look_at_left = self.reachy.head.look_at_async(0.5, 0.5, -0.1, duration=1.0)
+        look_at_left = self.reachy.head.look_at_async(
+            0.5,
+            0.5,
+            -0.1,
+            duration=1.0,
+            interpolation_mode=InterpolationMode.MINIMUM_JERK,
+            starting_positions = {
+                self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+                self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+                self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+                }
+            )
         await asyncio.gather(traj_antennas, look_at_left)
         await asyncio.sleep(0.5)
 
@@ -467,14 +547,76 @@ class Lonely(Behavior):
             interpolation_mode=InterpolationMode.MINIMUM_JERK
         )
 
-        first_look_down = self.reachy.head.look_at_async(0.5, 0.08, -0.4, duration=1.0)
+        first_look_down = goto_async(
+            self.reachy.head._look_at(x=0.5, y=0.08, z=-0.4),
+            duration=1.0,
+            starting_positions={
+                self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+                self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+                self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+            },
+            interpolation_mode=InterpolationMode.MINIMUM_JERK,
+        )
+        # first_look_down = self.reachy.head.look_at_async(
+        #     0.5,
+        #     0.08,
+        #     -0.4,
+        #     duration=1.0,
+        #     interpolation_mode=InterpolationMode.MINIMUM_JERK,
+        #     starting_positions = {
+        #         self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+        #         self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+        #         self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+        #         }
+        #     )
         await asyncio.gather(
             traj_antennas,
             first_look_down,
         )
-        await self.reachy.head.look_at_async(0.5, -0.08, -0.4, duration=1.0)
-        await self.reachy.head.look_at_async(0.5, 0.08, -0.4, duration=1.0)
-
+        # await self.reachy.head.look_at_async(
+        #     0.5,
+        #     -0.08,
+        #     -0.4,
+        #     duration=1.0,
+        #     interpolation_mode=InterpolationMode.MINIMUM_JERK,
+        #     starting_positions = {
+        #         self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+        #         self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+        #         self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+        #         }
+        #     )
+        await goto_async(
+            self.reachy.head._look_at(x=0.5, y=-0.08, z=-0.4),
+            duration=1.0,
+            starting_positions={
+                self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+                self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+                self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+            },
+            interpolation_mode=InterpolationMode.MINIMUM_JERK,
+        )
+        # await self.reachy.head.look_at_async(
+        #     0.5,
+        #     0.08,
+        #     -0.4,
+        #     duration=1.0,
+        #     interpolation_mode=InterpolationMode.MINIMUM_JERK,
+        #     starting_positions = {
+        #         self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+        #         self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+        #         self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+        #         }
+        #     )
+        await goto_async(
+            self.reachy.head._look_at(x=0.5, y=0.08, z=-0.4),
+            duration=1.0,
+            starting_positions={
+                self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+                self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+                self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+            },
+            interpolation_mode=InterpolationMode.MINIMUM_JERK,
+        )
         await asyncio.sleep(0.2)
 
         traj_antennas = goto_async(
@@ -486,7 +628,28 @@ class Lonely(Behavior):
             interpolation_mode=InterpolationMode.MINIMUM_JERK
         )
 
-        look_straight = self.reachy.head.look_at_async(0.5, 0.2, 0.0, duration=1.0)
+        look_straight = goto_async(
+            self.reachy.head._look_at(x=0.5, y=0.2, z=0.0),
+            duration=1.0,
+            starting_positions={
+                self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+                self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+                self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+            },
+            interpolation_mode=InterpolationMode.MINIMUM_JERK,
+        )
+        # look_straight = self.reachy.head.look_at_async(
+        #     0.5,
+        #     0.2,
+        #     0.0,
+        #     duration=1.0,
+        #     interpolation_mode=InterpolationMode.MINIMUM_JERK,
+        #     starting_positions = {
+        #         self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+        #         self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+        #         self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+        #         }
+        #     )
         await asyncio.gather(
             traj_antennas,
             look_straight,
@@ -524,7 +687,16 @@ class Scratch(Behavior):
         for j in self.reachy.l_arm.joints.values():
             j.torque_limit = 100.0
 
-        look_down = self.reachy.head.look_at_async(0.5, -0.1, -0.5, duration=1.0)
+        look_down = self.reachy.head.look_at_async(
+            0.5,
+            -0.1,
+            -0.5,
+            duration=1.0,
+            starting_positions={
+                self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+                self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+                self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+            })
 
         traj_antennas = goto_async(
             goal_positions={
@@ -535,7 +707,7 @@ class Scratch(Behavior):
             interpolation_mode=InterpolationMode.MINIMUM_JERK
         )
 
-        first_point = dict(zip(self.recorded_joints, self.scratch_arm[0]))
+        first_point = dict(zip(self.recorded_joints, self.scratch_arm[50]))
         # Goes to the start of the trajectory in 3s
         first_pos = goto_async(first_point, duration=1.0)
 
@@ -545,7 +717,7 @@ class Scratch(Behavior):
             traj_antennas,
         )
 
-        for jp_arms in self.scratch_arm:
+        for jp_arms in self.scratch_arm[50:]:
             for joint, pos in zip(self.recorded_joints, jp_arms):
                 joint.goal_position = pos
 
@@ -559,7 +731,26 @@ class Scratch(Behavior):
             duration=1.0,
             interpolation_mode=InterpolationMode.MINIMUM_JERK
         )
-        watch_arm_head = self.reachy.head.look_at_async(0.5, -0.1, -0.3, duration=0.5)
+        hands_back = goto_async(
+            {self.reachy.l_arm.l_shoulder_pitch: 0.0,
+            self.reachy.l_arm.l_shoulder_roll: 0.0,
+            self.reachy.l_arm.l_arm_yaw: 0.0,
+            self.reachy.l_arm.l_elbow_pitch: 0.0,
+            self.reachy.l_arm.l_forearm_yaw: 0.0,
+            self.reachy.l_arm.l_wrist_pitch: 0.0,
+            self.reachy.l_arm.l_wrist_roll: 0.0},
+            duration=1.2,
+        )
+        watch_arm_head = self.reachy.head.look_at_async(
+            0.5,
+            -0.1,
+            -0.3,
+            duration=0.5,
+            starting_positions={
+                self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+                self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+                self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+            })
         pose_watch_right_arm = [-21, 7, 38, -102, 27, -10, -4]
         goto_dic = {j: pos for j, pos in zip(self.reachy.r_arm.joints.values(), pose_watch_right_arm)}
         watch_arm_arm = goto_async(goal_positions=goto_dic, duration=0.5)
@@ -567,6 +758,7 @@ class Scratch(Behavior):
         await asyncio.gather(
             watch_arm_head,
             watch_arm_arm,
+            hands_back,
             traj_antennas,
         )
 
@@ -580,15 +772,54 @@ class Scratch(Behavior):
             duration=1.0,
             interpolation_mode=InterpolationMode.MINIMUM_JERK
         )
-        traj_head = self.reachy.head.look_at_async(0.5, -0.1, 0.0, duration=1.0)
-        base_pos_right = [-1.73, -3.67, -0.57, -68.44, 4.0, -29.67, -4.84, -47.14]
-        goto_dic = {j: pos for j, pos in zip(self.reachy.r_arm.joints.values(), base_pos_right)}
-        arm_down = goto_async(goal_positions=goto_dic, duration=1.0)
-        await asyncio.gather(
-            traj_head,
-            traj_antennas,
-            arm_down,
+        # traj_head = self.reachy.head.look_at_async(
+        #     0.5,
+        #     -0.1,
+        #     0.0,
+        #     duration=1.0,
+        #     starting_positions={
+        #         self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+        #         self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+        #         self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+        #     })
+        # base_pos_right = [-1.73, -3.67, -0.57, -68.44, 4.0, -29.67, -4.84, -47.14]
+        # goto_dic = {j: pos for j, pos in zip(self.reachy.r_arm.joints.values(), base_pos_right)}
+        # arm_down = goto_async(goal_positions=goto_dic, duration=1.0)
+        # await asyncio.gather(
+        #     traj_head,
+        #     traj_antennas,
+        #     arm_down,
+        # )
+
+        look_back = self.reachy.head.look_at_async(
+            0.5,
+            0.0,
+            0.0,
+            duration=1.5,
+            starting_positions={
+                self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+                self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+                self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+            })
+        hands_back = goto_async(
+            {self.reachy.r_arm.r_shoulder_pitch: 0.0,
+            self.reachy.r_arm.r_shoulder_roll: 0.0,
+            self.reachy.r_arm.r_arm_yaw: 0.0,
+            self.reachy.r_arm.r_elbow_pitch: 0.0,
+            self.reachy.r_arm.r_forearm_yaw: 0.0,
+            self.reachy.r_arm.r_wrist_pitch: 0.0,
+            self.reachy.r_arm.r_wrist_roll: 0.0},
+            duration=1.2,
         )
+
+        await asyncio.gather(
+            traj_antennas,
+            look_back,
+            hands_back,
+        )
+
+        self.reachy.turn_off_smoothly('r_arm')
+        self.reachy.turn_off_smoothly('l_arm')
 
     async def teardown(self):
         return await super().teardown()
@@ -791,29 +1022,70 @@ class Tshirt(Behavior):
         for j in self.reachy.l_arm.joints.values():
             j.torque_limit = 100.0
 
-        look_down = self.reachy.head.look_at_async(0.5, 0.2, -0.5, duration=0.8)
+        look_down = self.reachy.head.look_at_async(
+            0.5,
+            0.2,
+            -0.5,
+            duration=1.0,
+            starting_positions={
+                self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+                self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+                self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+            })
 
-        first_point = dict(zip(self.recorded_joints, self.touch_tshirt[0]))
+        first_point = dict(zip(self.recorded_joints, self.touch_tshirt[100]))
         # Goes to the start of the trajectory in 3s
-        first_pos = goto_async(first_point, duration=0.8)
+        first_pos = goto_async(first_point, duration=1.0)
 
         await asyncio.gather(
             look_down,
             first_pos,
         )
 
-        for jp_arms in self.touch_tshirt:
+        for jp_arms in self.touch_tshirt[100:]:
             for joint, pos in zip(self.recorded_joints, jp_arms):
                 joint.goal_position = pos
 
             await asyncio.sleep(1 / (self.sampling_frequency * 1.5))
 
-        pose_end_arm = [16.11, 7, -9.71, -84.62, 13.67, -5.14, -29.18]
-        goto_dic = {j: pos for j, pos in zip(self.reachy.l_arm.joints.values(), pose_end_arm)}
-        end_move = goto_async(goal_positions=goto_dic, duration=1.0, interpolation_mode=InterpolationMode.MINIMUM_JERK)
+        # pose_end_arm = [16.11, 7, -9.71, -84.62, 13.67, -5.14, -29.18]
+        # goto_dic = {j: pos for j, pos in zip(self.reachy.l_arm.joints.values(), pose_end_arm)}
+        # end_move = goto_async(goal_positions=goto_dic, duration=1.0, interpolation_mode=InterpolationMode.MINIMUM_JERK)
+
+        look_back = self.reachy.head.look_at_async(
+            0.5,
+            0.0,
+            0.0,
+            duration=1.5,
+            starting_positions={
+                self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+                self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+                self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+            })
+        hand_back = goto_async(
+            {self.reachy.l_arm.l_shoulder_pitch: 0.0,
+            self.reachy.l_arm.l_shoulder_roll: 0.0,
+            self.reachy.l_arm.l_arm_yaw: 0.0,
+            self.reachy.l_arm.l_elbow_pitch: 0.0,
+            self.reachy.l_arm.l_forearm_yaw: 0.0,
+            self.reachy.l_arm.l_wrist_pitch: 0.0,
+            self.reachy.l_arm.l_wrist_roll: 0.0},
+            duration=2.0,
+        )
 
         await asyncio.gather(
-            end_move,
+            look_back,
+            hand_back,
+        )
+
+        self.reachy.turn_off_smoothly('l_arm')
+
+        # await asyncio.gather(
+        #     end_move,
+        # )
+        await asyncio.gather(
+            hand_back,
+            look_back,
         )
 
         await asyncio.sleep(0.3)
@@ -847,11 +1119,20 @@ class SweatHead(Behavior):
         for j in self.reachy.l_arm.joints.values():
             j.torque_limit = 100.0
 
-        first_point = dict(zip(self.recorded_joints, self.sweat_head[0]))
-        # Goes to the start of the trajectory in 3s
-        await goto_async(first_point, duration=1.0)
+        # first_point = dict(zip(self.recorded_joints, self.sweat_head[100]))
+        # # Goes to the start of the trajectory in 3s
+        # await goto_async(first_point, duration=3.0)
 
-        look_down = self.reachy.head.look_at_async(0.5, -0.2, -0.4, duration=1.5)
+        look_down = self.reachy.head.look_at_async(
+            0.5,
+            -0.2,
+            -0.4,
+            duration=1.5,
+            starting_positions={
+                self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+                self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+                self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+            })
 
         traj_antennas = goto_async(
             goal_positions={
@@ -859,12 +1140,12 @@ class SweatHead(Behavior):
                 self.reachy.head.l_antenna: 180,
             },
             duration=1.5,
-            interpolation_mode=InterpolationMode.MINIMUM_JERK
+            interpolation_mode=InterpolationMode.MINIMUM_JERK,
         )
 
         point110 = dict(zip(self.recorded_joints, self.sweat_head[300]))
         # Goes to the start of the trajectory in 3s
-        first_pos = goto_async(point110, duration=1.5)
+        first_pos = goto_async(point110, duration=2.5)
 
         await asyncio.gather(
             look_down,
@@ -879,7 +1160,16 @@ class SweatHead(Behavior):
             await asyncio.sleep(1 / self.sampling_frequency)
         
 
-        look_up = self.reachy.head.look_at_async(0.5, 0, 0, duration=1.0)
+        look_up = self.reachy.head.look_at_async(
+            0.5,
+            0,
+            0,
+            duration=1.0,
+            starting_positions={
+                self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
+                self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
+                self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
+            })
 
         traj_antennas = goto_async(
             goal_positions={
@@ -892,13 +1182,26 @@ class SweatHead(Behavior):
 
         point880 = dict(zip(self.recorded_joints, self.sweat_head[980]))
         # Goes to the start of the trajectory in 3s
-        last_pos = goto_async(point880, duration=1.0)
+        # last_pos = goto_async(point880, duration=1.0)
+        last_pos = goto_async(
+            {self.reachy.l_arm.l_shoulder_pitch: 0.0,
+            self.reachy.l_arm.l_shoulder_roll: 0.0,
+            self.reachy.l_arm.l_arm_yaw: 0.0,
+            self.reachy.l_arm.l_elbow_pitch: 0.0,
+            self.reachy.l_arm.l_forearm_yaw: 0.0,
+            self.reachy.l_arm.l_wrist_pitch: 0.0,
+            self.reachy.l_arm.l_wrist_roll: 0.0},
+            duration=2.0,
+        )
 
         await asyncio.gather(
             look_up,
             traj_antennas,
             last_pos,
         )
+
+        for j in self.reachy.l_arm.joints.values():
+            j.compliant = True
 
     async def teardown(self):
         return await super().teardown()
@@ -1163,22 +1466,26 @@ class Whistle(Behavior):
 
         for j in self.reachy.l_arm.joints.values():
             j.torque_limit = 0.0
-        
+
+        breathing = ArmBreathing(name = 'brt', reachy = self.reachy, fundamental_frequency=0.1)
+        await breathing.start()
+
         await self.reachy.head.look_at_async(0.5, 0.0, 0.0, 1.0)
 
         first_point = dict(zip(self.recorded_head, self.head_movement[40]))
         # Goes to the start of the trajectory in 1s
         await goto_async(first_point, duration=0.5)
-
-        playsound(self.whistle_sound, block=False)
-
-        for jp_head in self.head_movement[40:]:
-            for joint, pos in zip(self.recorded_head, jp_head):
-                joint.goal_position = pos
-
-            await asyncio.sleep(1 / self.sampling_frequency)
-
         
+        for i in range(3):
+            playsound(self.whistle_sound, block=False)
+
+            for jp_head in self.head_movement[40:180]:
+                for joint, pos in zip(self.recorded_head, jp_head):
+                    joint.goal_position = pos
+
+                await asyncio.sleep(1 / self.sampling_frequency)
+
+        await breathing.stop()
 
     async def teardown(self):
         return await super().teardown()
@@ -1420,6 +1727,62 @@ class BlahBlah(Behavior):
         return await super().teardown()
 
 
+class ArmBreathing(Behavior):
+    def __init__(self, name: str, reachy, sub_behavior: bool = False, fundamental_frequency: float = 0.3) -> None:
+        super().__init__(name, reachy, sub_behavior=sub_behavior)
+        self.fundamental_frequency = fundamental_frequency
+
+    async def run(self):
+        for j in self.reachy.r_arm.joints.values():
+            j.torque_limit = 100.0
+
+        for j in self.reachy.l_arm.joints.values():
+            j.torque_limit = 100.0
+
+        await goto_async(
+            {self.reachy.l_arm.l_shoulder_pitch: 0.0,
+            self.reachy.l_arm.l_shoulder_roll: 0.0,
+            self.reachy.l_arm.l_arm_yaw: 0.0,
+            self.reachy.l_arm.l_elbow_pitch: 0.0,
+            self.reachy.l_arm.l_forearm_yaw: 0.0,
+            self.reachy.l_arm.l_wrist_pitch: 0.0,
+            self.reachy.l_arm.l_wrist_roll: 0.0,
+            self.reachy.l_arm.l_gripper: 0.0,
+            self.reachy.r_arm.r_shoulder_pitch: 0.0,
+            self.reachy.r_arm.r_shoulder_roll: 0.0,
+            self.reachy.r_arm.r_arm_yaw: 0.0,
+            self.reachy.r_arm.r_elbow_pitch: 0.0,
+            self.reachy.r_arm.r_forearm_yaw: 0.0,
+            self.reachy.r_arm.r_wrist_pitch: 0.0,
+            self.reachy.r_arm.r_wrist_roll: 0.0,
+            self.reachy.r_arm.r_gripper: 0.0,},
+            duration=1.0,
+        )
+
+        dur = 20
+        t = np.linspace(0, dur, dur * 100)
+
+        t0 = time.time()
+
+        while True:
+            pos = 4 * np.sin(2 * np.pi * self.fundamental_frequency * (time.time()-t0))
+            self.reachy.r_arm.r_arm_yaw.goal_position = pos
+            self.reachy.l_arm.l_arm_yaw.goal_position = -pos
+            pos2 = 1.5 * np.sin(2 * np.pi * self.fundamental_frequency * (time.time()-t0) + np.pi)
+            self.reachy.r_arm.r_shoulder_roll.goal_position = pos2
+            self.reachy.l_arm.l_shoulder_roll.goal_position = -pos2
+            pos3 = 3 * np.sin(2 * np.pi * self.fundamental_frequency/2 * (time.time()-t0) + np.pi)
+            self.reachy.r_arm.r_forearm_yaw.goal_position = -pos3
+            self.reachy.l_arm.l_forearm_yaw.goal_position = -pos3
+            pos4 = 4 * np.sin(2 * np.pi * self.fundamental_frequency * (time.time()-t0) + np.pi)
+            self.reachy.r_arm.r_gripper.goal_position = -pos4
+            self.reachy.l_arm.l_gripper.goal_position = pos4
+            await asyncio.sleep(0.01)
+        
+
+    async def teardown(self):
+        return await super().teardown()
+
 
 class Idle(Behavior):
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
@@ -1451,6 +1814,7 @@ class Idle(Behavior):
             'sigh' : Sigh(name='sigh', reachy=self.reachy, sub_behavior=True),
             'clear_throat' : ClearThroat(name='clear_throat', reachy=self.reachy, sub_behavior=True),
             'blahblah' : BlahBlah(name='blahblah', reachy=self.reachy, sub_behavior=True),
+            'arm_breathing' : ArmBreathing(name='arm_breathing', reachy=self.reachy, sub_behavior=True),
         }
 
     async def run(self):
