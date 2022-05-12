@@ -290,10 +290,10 @@ class Tshirt(Behavior):
         # await asyncio.gather(
         #     end_move,
         # )
-        await asyncio.gather(
-            hand_back,
-            look_back,
-        )
+        # await asyncio.gather(
+        #     hand_back,
+        #     look_back,
+        # )
 
         await asyncio.sleep(0.3)
 
