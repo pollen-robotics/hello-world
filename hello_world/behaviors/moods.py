@@ -1,12 +1,11 @@
 import asyncio
 import numpy as np
 
-from playsound import playsound
-
 from reachy_sdk.trajectory import goto_async
 from reachy_sdk.trajectory.interpolation import InterpolationMode
 
 from . import Behavior
+from .player import playsound
 
 
 class Lonely(Behavior):
@@ -413,6 +412,89 @@ class SweatHead(Behavior):
         return await super().teardown()
 
 
+class Hello(Behavior):
+    def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        super().__init__(name, reachy, sub_behavior=sub_behavior)
+
+        self.move_antennas = np.load('movements/hello_move_antennas.npy')
+        self.move_arm = np.load('movements/hello_move.npy')
+
+        self.sampling_frequency = 100
+
+        self.recorded_joints_arm = [
+            self.reachy.l_arm.l_shoulder_pitch,
+            self.reachy.l_arm.l_shoulder_roll,
+            self.reachy.l_arm.l_arm_yaw,
+            self.reachy.l_arm.l_elbow_pitch,
+            self.reachy.l_arm.l_forearm_yaw,
+            self.reachy.l_arm.l_wrist_pitch,
+            self.reachy.l_arm.l_wrist_roll,
+        ]
+
+        self.recorded_joints_antennas = [
+            self.reachy.head.l_antenna,
+            self.reachy.head.r_antenna,
+        ]
+
+    async def run(self):
+        for j in self.reachy.r_arm.joints.values():
+            j.torque_limit = 0.0
+
+        for j in self.reachy.l_arm.joints.values():
+            j.torque_limit = 100.0
+
+        head_move = goto_async(
+            {
+                self.reachy.head.neck_roll: 10.9,
+                self.reachy.head.neck_pitch: 7.11,
+                self.reachy.head.neck_yaw: 8.35,
+            },
+            duration=0.4,
+        )
+
+        first_point = dict(zip(self.recorded_joints_arm, self.move_arm[150]))
+        arm_move = goto_async(first_point, duration=0.4)
+        first_point_antennas = dict(zip(self.recorded_joints_antennas, self.move_antennas[50]))
+        antennas_move = goto_async(first_point_antennas, duration=0.4)
+
+        await asyncio.gather(
+            head_move,
+            arm_move,
+            antennas_move
+        )
+
+        for (jp_antennas, jp_arms) in zip(self.move_antennas[50:], self.move_arm[150:500]):
+            for joint, pos in zip(self.recorded_joints_arm, jp_arms):
+                joint.goal_position = pos
+            for joint, pos in zip(self.recorded_joints_antennas, jp_antennas):
+                joint.goal_position = pos
+
+            await asyncio.sleep(1 / self.sampling_frequency)
+
+        last_pos = goto_async({
+                self.reachy.l_arm.l_shoulder_pitch: 0.0,
+                self.reachy.l_arm.l_shoulder_roll: 0.0,
+                self.reachy.l_arm.l_arm_yaw: 0.0,
+                self.reachy.l_arm.l_elbow_pitch: 0.0,
+                self.reachy.l_arm.l_forearm_yaw: 0.0,
+                self.reachy.l_arm.l_wrist_pitch: 0.0,
+                self.reachy.l_arm.l_wrist_roll: 0.0},
+                duration=1.0,
+        )
+
+        last_look_at = self.reachy.head.look_at_async(0.5, 0, 0, 0.5)
+
+        await asyncio.gather(
+            last_look_at,
+            last_pos,
+        )
+
+        self.reachy.turn_off_smoothly('l_arm')
+
+    async def teardown(self):
+        return await super().teardown()
+
+
 class TouchAntenna(Behavior):
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
         super().__init__(name, reachy, sub_behavior=sub_behavior)
@@ -662,15 +744,33 @@ class Whistle(Behavior):
             self.reachy.head.neck_yaw,
         ]
 
+        self.recorded_joints = [
+            reachy.l_arm.l_shoulder_pitch,
+            reachy.l_arm.l_shoulder_roll,
+            reachy.l_arm.l_arm_yaw,
+            reachy.l_arm.l_elbow_pitch,
+            reachy.l_arm.l_forearm_yaw,
+            reachy.l_arm.l_wrist_pitch,
+            reachy.l_arm.l_wrist_roll,
+            reachy.r_arm.r_shoulder_pitch,
+            reachy.r_arm.r_shoulder_roll,
+            reachy.r_arm.r_arm_yaw,
+            reachy.r_arm.r_elbow_pitch,
+            reachy.r_arm.r_forearm_yaw,
+            reachy.r_arm.r_wrist_pitch,
+            reachy.r_arm.r_wrist_roll,
+        ]
+
     async def run(self):
+
         for j in self.reachy.r_arm.joints.values():
             j.torque_limit = 0.0
 
         for j in self.reachy.l_arm.joints.values():
-            j.torque_limit = 0.0
+            j.torque_limit = 100.0
 
-        # breathing = ArmBreathing(name='arm_breathing', reachy=self.reachy, fundamental_frequency=0.1)
-        # await breathing.start()
+        arm_move = ArmRythm(name = 'arm_move', reachy = self.reachy)
+        await arm_move.start()
 
         await self.reachy.head.look_at_async(0.5, 0.0, 0.0, 1.0)
 
@@ -687,7 +787,45 @@ class Whistle(Behavior):
 
                 await asyncio.sleep(1 / self.sampling_frequency)
 
-        # await breathing.stop()
+        await arm_move.stop()
+
+    async def teardown(self):
+        return await super().teardown()
+
+
+class ArmRythm(Behavior):
+
+    def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        super().__init__(name, reachy, sub_behavior=sub_behavior)
+
+        self.arm_movement = np.load('movements/whistle_arms_3.npy')
+
+        self.sampling_frequency = 100
+
+        self.recorded_joints = [
+            reachy.l_arm.l_shoulder_pitch,
+            reachy.l_arm.l_shoulder_roll,
+            reachy.l_arm.l_arm_yaw,
+            reachy.l_arm.l_elbow_pitch,
+            reachy.l_arm.l_forearm_yaw,
+            reachy.l_arm.l_wrist_pitch,
+            reachy.l_arm.l_wrist_roll,
+            reachy.r_arm.r_shoulder_pitch,
+            reachy.r_arm.r_shoulder_roll,
+            reachy.r_arm.r_arm_yaw,
+            reachy.r_arm.r_elbow_pitch,
+            reachy.r_arm.r_forearm_yaw,
+            reachy.r_arm.r_wrist_pitch,
+            reachy.r_arm.r_wrist_roll,
+        ]
+
+    async def run(self):
+
+        for jp_arm in self.arm_movement:
+            for joint, pos in zip(self.recorded_joints, jp_arm):
+                joint.goal_position = pos
+
+            await asyncio.sleep(1 / self.sampling_frequency)
 
     async def teardown(self):
         return await super().teardown()

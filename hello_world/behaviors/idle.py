@@ -3,7 +3,7 @@ import numpy as np
 from . import Behavior
 from .asleep import Asleep
 from .look import LookHand
-from .moods import Lonely, Tshirt, SweatHead, Sneeze, Whistle
+from .moods import Lonely, Tshirt, SweatHead, Sneeze, Whistle, Hello
 from .scratch import Scratch
 
 
@@ -20,6 +20,7 @@ class Idle(Behavior):
             'sweat_head': SweatHead(name='sweat_head', reachy=self.reachy, sub_behavior=True),
             'sneeze': Sneeze(name='sneeze', reachy=self.reachy, sub_behavior=True),
             'whistle': Whistle(name='whistle', reachy=self.reachy, sub_behavior=True),
+            'hello': Hello(name='hello', reachy=self.reachy, sub_behavior=True)
         }
 
     async def run(self):
