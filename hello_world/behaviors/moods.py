@@ -416,7 +416,7 @@ class Hello(Behavior):
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
         super().__init__(name, reachy, sub_behavior=sub_behavior)
 
-        self.move_antennas = np.load('movements/hello_move_antennas.npy')
+        # self.move_antennas = np.load('movements/hello_move_antennas.npy')
         self.move_arm = np.load('movements/hello_move.npy')
 
         self.sampling_frequency = 100
