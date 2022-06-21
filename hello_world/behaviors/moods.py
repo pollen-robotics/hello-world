@@ -690,8 +690,8 @@ class Sneeze(Behavior):
         for j in self.reachy.r_arm.joints.values():
             j.torque_limit = 0.0
 
-        for j in self.reachy.l_arm.joints.values():
-            j.torque_limit = 0.0
+        # for j in self.reachy.l_arm.joints.values():
+        #     j.torque_limit = 0.0
 
         await self.reachy.head.look_at_async(0.5, 0.0, 0.2, 0.8)
         await asyncio.sleep(0.7)
