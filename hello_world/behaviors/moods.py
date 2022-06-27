@@ -10,9 +10,7 @@ from .player import playsound
 
 class Lonely(Behavior):
     async def run(self):
-        # base_pos_right = [-1.73, -3.67, -0.57, -68.44, 4.0, -29.67, -4.84, -47.14]
-        # goto_dic = {j: pos for j, pos in zip(self.reachy.r_arm.joints.values(), base_pos_right)}
-        # arm_down = goto_async(goal_positions=goto_dic, duration=1.0)
+
         traj_antennas = goto_async(
             goal_positions={
                 self.reachy.head.r_antenna: -65,
@@ -33,7 +31,7 @@ class Lonely(Behavior):
                 self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
                 }
             )
-        # await asyncio.gather(arm_down, first_look_at, traj_antennas)
+
         await asyncio.gather(first_look_at, traj_antennas)
 
         for j in self.reachy.r_arm.joints.values():
@@ -106,34 +104,12 @@ class Lonely(Behavior):
             },
             interpolation_mode=InterpolationMode.MINIMUM_JERK,
         )
-        # first_look_down = self.reachy.head.look_at_async(
-        #     0.5,
-        #     0.08,
-        #     -0.4,
-        #     duration=1.0,
-        #     interpolation_mode=InterpolationMode.MINIMUM_JERK,
-        #     starting_positions = {
-        #         self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
-        #         self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
-        #         self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
-        #         }
-        #     )
+
         await asyncio.gather(
             traj_antennas,
             first_look_down,
         )
-        # await self.reachy.head.look_at_async(
-        #     0.5,
-        #     -0.08,
-        #     -0.4,
-        #     duration=1.0,
-        #     interpolation_mode=InterpolationMode.MINIMUM_JERK,
-        #     starting_positions = {
-        #         self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
-        #         self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
-        #         self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
-        #         }
-        #     )
+
         await goto_async(
             self.reachy.head._look_at(x=0.5, y=-0.08, z=-0.4),
             duration=1.0,
@@ -144,18 +120,7 @@ class Lonely(Behavior):
             },
             interpolation_mode=InterpolationMode.MINIMUM_JERK,
         )
-        # await self.reachy.head.look_at_async(
-        #     0.5,
-        #     0.08,
-        #     -0.4,
-        #     duration=1.0,
-        #     interpolation_mode=InterpolationMode.MINIMUM_JERK,
-        #     starting_positions = {
-        #         self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
-        #         self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
-        #         self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
-        #         }
-        #     )
+
         await goto_async(
             self.reachy.head._look_at(x=0.5, y=0.08, z=-0.4),
             duration=1.0,
@@ -187,18 +152,7 @@ class Lonely(Behavior):
             },
             interpolation_mode=InterpolationMode.MINIMUM_JERK,
         )
-        # look_straight = self.reachy.head.look_at_async(
-        #     0.5,
-        #     0.2,
-        #     0.0,
-        #     duration=1.0,
-        #     interpolation_mode=InterpolationMode.MINIMUM_JERK,
-        #     starting_positions = {
-        #         self.reachy.head.neck_pitch: self.reachy.head.neck_pitch.goal_position,
-        #         self.reachy.head.neck_roll: self.reachy.head.neck_roll.goal_position,
-        #         self.reachy.head.neck_yaw: self.reachy.head.neck_yaw.goal_position,
-        #         }
-        #     )
+
         await asyncio.gather(
             traj_antennas,
             look_straight,
