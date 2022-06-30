@@ -72,6 +72,7 @@ class Idle(Behavior):
             'sneeze': Sneeze(name='sneeze', reachy=self.reachy, sub_behavior=True),
             'whistle': Whistle(name='whistle', reachy=self.reachy, sub_behavior=True),
             'hello': Hello(name='hello', reachy=self.reachy, sub_behavior=True),
-            'NEW_BEHAVIOR': NewBehavior(name='new_behavior', reachy=self.reachy, sub_behavior=True),
+            # Add your new behavior here :
+            # 'NEW_BEHAVIOR': NewBehavior(name='new_behavior', reachy=self.reachy, sub_behavior=True),
         }
 ```
