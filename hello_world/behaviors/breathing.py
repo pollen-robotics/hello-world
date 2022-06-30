@@ -10,6 +10,14 @@ from . import Behavior
 
 
 class ArmBreathing(Behavior):
+    """
+    ArmBreathing class.
+
+    Makes Reachy discreetly swings its arms at a given frequency.
+
+    Uses: right_arm, left_arm
+    Dependencies to other behaviors: none
+    """
     def __init__(self, name: str, reachy, sub_behavior: bool = False, fundamental_frequency: float = 0.3, phase: float = 0) -> None:
         super().__init__(name, reachy, sub_behavior=sub_behavior)
         self.fundamental_frequency = fundamental_frequency

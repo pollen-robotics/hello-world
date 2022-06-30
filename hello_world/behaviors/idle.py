@@ -1,3 +1,10 @@
+"""
+Idle mode definition.
+
+Idle acts as a main behavior, and calls randomly defined behaviors as sub-behaviors.
+Between each sub-behavior, awaits for the asleep behavior to be played.
+"""
+
 import numpy as np
 
 from . import Behavior
@@ -8,6 +15,8 @@ from .scratch import Scratch
 
 
 class Idle(Behavior):
+    """Idle class."""
+
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
         super().__init__(name, reachy=reachy, sub_behavior=sub_behavior)
         self.reachy = reachy

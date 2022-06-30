@@ -1,3 +1,9 @@
+"""
+Look behaviors.
+
+Behaviors making Reachy look at something.
+"""
+
 import asyncio
 import numpy as np
 
@@ -7,6 +13,15 @@ from . import Behavior
 
 
 class LookHand(Behavior):
+    """
+    LookHand class.
+
+    Makes Reachy move its gripper and watch at it.
+
+    Uses: right_arm, head
+    Dependencies to other behaviors: none
+    """
+
     async def run(self):
         for j in self.reachy.r_arm.joints.values():
             j.torque_limit = 100.0

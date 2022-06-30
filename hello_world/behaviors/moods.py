@@ -1,3 +1,9 @@
+"""
+Moods behaviors.
+
+Definiton of miscellaneous behaviors for Reachy.
+"""
+
 import asyncio
 import numpy as np
 
@@ -9,6 +15,15 @@ from .player import playsound
 
 
 class Lonely(Behavior):
+    """
+    Lonely class.
+
+    Makes Reachy look around and act sad at the end.
+
+    Uses: head
+    Dependencies to other behaviors: none
+    """
+
     async def run(self):
 
         traj_antennas = goto_async(
@@ -160,6 +175,15 @@ class Lonely(Behavior):
 
 
 class Tshirt(Behavior):
+    """
+    Tshirt class.
+
+    Makes Reachy grab its T-shirt, and put it back in place.
+
+    Uses: left_arm, head
+    Dependencies to other behaviors: none
+    """
+
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
         super().__init__(name, reachy, sub_behavior=sub_behavior)
 
@@ -194,7 +218,6 @@ class Tshirt(Behavior):
             })
 
         first_point = dict(zip(self.recorded_joints, self.touch_tshirt[100]))
-        # Goes to the start of the trajectory in 3s
         first_pos = goto_async(first_point, duration=1.0)
 
         await asyncio.gather(
@@ -207,10 +230,6 @@ class Tshirt(Behavior):
                 joint.goal_position = pos
 
             await asyncio.sleep(1 / (self.sampling_frequency * 1.5))
-
-        # pose_end_arm = [16.11, 7, -9.71, -84.62, 13.67, -5.14, -29.18]
-        # goto_dic = {j: pos for j, pos in zip(self.reachy.l_arm.joints.values(), pose_end_arm)}
-        # end_move = goto_async(goal_positions=goto_dic, duration=1.0, interpolation_mode=InterpolationMode.MINIMUM_JERK)
 
         look_back = self.reachy.head.look_at_async(
             0.5,
@@ -240,14 +259,6 @@ class Tshirt(Behavior):
 
         self.reachy.turn_off_smoothly('l_arm')
 
-        # await asyncio.gather(
-        #     end_move,
-        # )
-        # await asyncio.gather(
-        #     hand_back,
-        #     look_back,
-        # )
-
         await asyncio.sleep(0.3)
 
     async def teardown(self):
@@ -255,6 +266,15 @@ class Tshirt(Behavior):
 
 
 class SweatHead(Behavior):
+    """
+    SweatHead class.
+
+    Makes Reachy touch wipe its head as if it was too hot.
+
+    Uses: left_arm, head
+    Dependencies to other behaviors: none
+    """
+
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
         super().__init__(name, reachy, sub_behavior=sub_behavior)
 
@@ -279,10 +299,6 @@ class SweatHead(Behavior):
         for j in self.reachy.l_arm.joints.values():
             j.torque_limit = 100.0
 
-        # first_point = dict(zip(self.recorded_joints, self.sweat_head[100]))
-        # # Goes to the start of the trajectory in 3s
-        # await goto_async(first_point, duration=3.0)
-
         look_down = self.reachy.head.look_at_async(
             0.5,
             -0.2,
@@ -304,7 +320,6 @@ class SweatHead(Behavior):
         )
 
         point110 = dict(zip(self.recorded_joints, self.sweat_head[300]))
-        # Goes to the start of the trajectory in 3s
         first_pos = goto_async(point110, duration=2.5)
 
         await asyncio.gather(
@@ -339,9 +354,6 @@ class SweatHead(Behavior):
             interpolation_mode=InterpolationMode.MINIMUM_JERK
         )
 
-        # point880 = dict(zip(self.recorded_joints, self.sweat_head[980]))
-        # Goes to the start of the trajectory in 3s
-        # last_pos = goto_async(point880, duration=1.0)
         last_pos = goto_async({
             self.reachy.l_arm.l_shoulder_pitch: 0.0,
             self.reachy.l_arm.l_shoulder_roll: 0.0,
@@ -367,6 +379,14 @@ class SweatHead(Behavior):
 
 
 class Hello(Behavior):
+    """
+    Hello class.
+
+    Makes Reachy wave its hand to say hello.
+
+    Uses: left_arm, head
+    Dependencies to other behaviors: none
+    """
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
         super().__init__(name, reachy, sub_behavior=sub_behavior)
 
@@ -449,18 +469,20 @@ class Hello(Behavior):
         return await super().teardown()
 
 
-
-        await self.reachy.head.look_at_async(0.5, 0, 0, duration=1.5)
-
-    async def teardown(self):
-        return await super().teardown()
-
-
 class Sneeze(Behavior):
+    """
+    Sneeze class.
+
+    Makes Reachy sneeze with a head movement.
+
+    Uses: head, sound
+    Dependencies to other behaviors: none
+    """
+
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
         super().__init__(name, reachy, sub_behavior=sub_behavior)
 
-        self.sneeze_sound = 'sounds/mixkit-little-baby-sneeze-2214.wav'
+        self.sneeze_sound = 'sounds/sneezing.wav'
 
     async def run(self):
         for j in self.reachy.r_arm.joints.values():
@@ -505,6 +527,15 @@ class Sneeze(Behavior):
 
 
 class Whistle(Behavior):
+    """
+    Whistle class.
+
+    Makes Reachy whistle a tune cheerfully.
+
+    Uses: right_arm, left_arm, head, sound
+    Dependencies to other behaviors: ArmRythm
+    """
+
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
         super().__init__(name, reachy, sub_behavior=sub_behavior)
 
@@ -570,7 +601,14 @@ class Whistle(Behavior):
 
 
 class ArmRythm(Behavior):
+    """
+    ArmRythm class.
 
+    Makes Reachy moves its arms in rythm.
+
+    Uses: right_arm, left_arm
+    Dependencies to other behaviors: none
+    """
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
         super().__init__(name, reachy, sub_behavior=sub_behavior)
 

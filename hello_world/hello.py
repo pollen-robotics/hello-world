@@ -1,3 +1,9 @@
+"""
+Helloworld application for Reachy2021.
+
+This package defines an idle mode for Reachy, in which defined behaviors can be played randomly.
+"""
+
 import asyncio
 
 from reachy_sdk import ReachySDK

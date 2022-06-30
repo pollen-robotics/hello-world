@@ -1,7 +1,15 @@
+"""
+Behavior class.
+Define standard behaviors conception.
+
+Behaviors can be cancelled when running.
+"""
 import asyncio
 
 
 class Behavior:
+    """Behavior class."""
+
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
         self.name = name
         self._task = None

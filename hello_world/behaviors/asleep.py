@@ -1,3 +1,9 @@
+"""
+Asleep behavior definition.
+
+Asleep behavior is used to wait between behaviors.
+"""
+
 import asyncio
 import time
 from .breathing import ArmBreathing
@@ -11,13 +17,20 @@ from .player import playsound
 
 
 class Asleep(Behavior):
+    """
+    Asleep class.
+
+    Uses: right_arm, left_arm, head, sound
+    Dependencies to other behaviors: ArmBreathing
+    """
+
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
         super().__init__(name, reachy=reachy, sub_behavior=sub_behavior)
         self.left_pos = [0, 0, 0, 0, 0, 0, 0]
         self.right_pos = [0, 0, 0, 0, 0, 0, 0]
         self.joint_names = list(reachy.l_arm.joints.values()) + list(self.reachy.r_arm.joints.values())
 
-        self.inhale = 'sounds/inhale.mp3'
+        self.inhale = 'sounds/inhaling.mp3'
 
         self.playsIsOk0 = True
         self.playsIsOk = False
