@@ -12,6 +12,8 @@ This idle behavior has been thought to:
 Clone the repository or download and extract the source code.  
 Then install the project by going in the repo and doing: `pip3 install -e .`  
 
+### Try the Idle mode
+
 Make sure your robot is in the correct position: it needs to have space around it and the arms straight towards the floor, with no table under it.
 
 Try it finally with the following command:  
@@ -27,7 +29,7 @@ The project is organized as following:
 ## Add new behaviors
 
 Each new behavior should inherite from the Behavior class. 
-It should as well define at least the __init__, calling the super().__init__ inherited from th Behavior class, an async run function and an async teardown, calling the inheritied super().teardown function of Behavior.
+It should as well define at least the __init__, calling the super().__init__ inherited from the Behavior class, an async run function and an async teardown, calling the inheritied super().teardown function of Behavior.
 A prototype is shown below:
 
 ```
