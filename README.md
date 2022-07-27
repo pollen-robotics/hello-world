@@ -1,9 +1,9 @@
 # hello-world
 
-The helloworld project is made to define idle movements to Reachy.
-This idle behavior has been thought to:
+The helloworld project defines an idle mode for Reachy.  
+This project has been thought to:
 * be able to make Reachy move immediately after the robot setup, without having to do any code
-* start to elaborate a way to define behaviors for human-robot interaction, making independant components that can be reused and integrated in more complex programs
+* start to elaborate a way to define behaviors for human-robot interaction, making independant components that can be reused and integrated in more complex programs. The idea is to be able to integrate this idle mode in any project requiring such a state, without having to re-code this behavior again and again.
 
 ## Discover helloworld
 
@@ -22,7 +22,7 @@ Try it finally with the following command:
 ### Project organization
 
 The project is organized as following:
-* **behaviors**: contains the defined idle behaviors
+* **hello-world/behaviors**: contains the defined idle behaviors
 * **movements**: contains the .npy of movements recorded that are called in some behaviors
 * **sounds**: contains sounds to be play in some behaviors
 
@@ -55,7 +55,7 @@ class NewBehavior(Behavior):
         return await super().teardown()
 ```
 
-In order to have your behavior called in the idle function, you should then add an entry for your function in the behaviors dictionnary of the Idle class:
+In order to have your behavior called in the idle function, you should then add an entry for your function in the behaviors dictionary of the Idle class:
 in `hello_world/behaviors/idle.py`, setting sub_behavior to True:  
 ```
 class Idle(Behavior):
