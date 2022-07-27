@@ -612,7 +612,7 @@ class ArmRythm(Behavior):
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
         super().__init__(name, reachy, sub_behavior=sub_behavior)
 
-        self.arm_movement = np.load('movements/whistle_arms_3.npy')
+        self.arm_movement = np.load('movements/whistle_arms.npy')
 
         self.sampling_frequency = 100
 
