@@ -4,7 +4,7 @@ Idle mode definition.
 Idle acts as a main behavior, and calls randomly defined behaviors as sub-behaviors.
 Between each sub-behavior, awaits for the asleep behavior to be played.
 """
-
+import logging
 import numpy as np
 
 from . import Behavior
@@ -19,6 +19,10 @@ class Idle(Behavior):
 
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
         super().__init__(name, reachy=reachy, sub_behavior=sub_behavior)
+
+        logging.basicConfig(level=logging.INFO)
+        self._logger = logging.getLogger()
+
         self.reachy = reachy
         self.asleep_behavior = Asleep(name='asleep', reachy=self.reachy, sub_behavior=True)
         self.behaviors = {
@@ -35,9 +39,13 @@ class Idle(Behavior):
     async def run(self):
         while True:
             asleep = await self.asleep_behavior.start()
+            self._logger.info('Playing asleep behavior.')
             await asleep
             self.reachy.turn_on('reachy')
-            await self.behaviors[np.random.choice(list(self.behaviors.keys()))]._run()
+
+            random_sub_behavior = np.random.choice(list(self.behaviors.keys()))
+            self._logger.info(f'Playing sub behavior {random_sub_behavior}')
+            await self.behaviors[random_sub_behavior]._run()
 
     async def teardown(self):
         self.reachy.turn_off_smoothly('reachy')
