@@ -25,4 +25,7 @@ if __name__ == '__main__':
         idle_behav = await idle.start()
         await idle_behav
 
-    asyncio.run(behavior())
+    try:
+        asyncio.run(behavior())
+    except KeyboardInterrupt:
+        logger.info('Ctrl-C received, turning off the application...')
