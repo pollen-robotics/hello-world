@@ -76,13 +76,13 @@ class Asleep(Behavior):
                 playsound(self.inhale, block=False)
                 self.playsIsOk = False
                 self.playsIsOk2 = True
-            
+
             if (time.time() - tic > 7.8) and self.playsIsOk2:
                 playsound(self.inhale, block=False)
                 self.playsIsOk2 = False
 
             await asyncio.sleep(0.01)
-        
+
         await breathing.stop()
 
         self.playsIsOk0 = True

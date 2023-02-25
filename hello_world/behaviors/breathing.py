@@ -18,7 +18,14 @@ class ArmBreathing(Behavior):
     Uses: right_arm, left_arm
     Dependencies to other behaviors: none
     """
-    def __init__(self, name: str, reachy, sub_behavior: bool = False, fundamental_frequency: float = 0.3, phase: float = 0) -> None:
+    def __init__(
+            self,
+            name: str,
+            reachy,
+            sub_behavior: bool = False,
+            fundamental_frequency: float = 0.3,
+            phase: float = 0
+            ) -> None:
         super().__init__(name, reachy, sub_behavior=sub_behavior)
         self.fundamental_frequency = fundamental_frequency
         self.phase = phase
@@ -30,8 +37,8 @@ class ArmBreathing(Behavior):
         for j in self.reachy.l_arm.joints.values():
             j.torque_limit = 100.0
 
-        await goto_async(
-            {self.reachy.l_arm.l_shoulder_pitch: 0.0,
+        await goto_async({
+            self.reachy.l_arm.l_shoulder_pitch: 0.0,
             self.reachy.l_arm.l_shoulder_roll: 0.0,
             self.reachy.l_arm.l_arm_yaw: 0.0,
             self.reachy.l_arm.l_elbow_pitch: 0.0,
@@ -46,12 +53,10 @@ class ArmBreathing(Behavior):
             self.reachy.r_arm.r_forearm_yaw: 0.0,
             self.reachy.r_arm.r_wrist_pitch: 0.0,
             self.reachy.r_arm.r_wrist_roll: 0.0,
-            self.reachy.r_arm.r_gripper: 0.0,},
+            self.reachy.r_arm.r_gripper: 0.0,
+            },
             duration=1.0,
         )
-
-        dur = 20
-        t = np.linspace(0, dur, dur * 100)
 
         t0 = time.time()
 
@@ -69,7 +74,6 @@ class ArmBreathing(Behavior):
             self.reachy.r_arm.r_gripper.goal_position = -pos4
             self.reachy.l_arm.l_gripper.goal_position = pos4
             await asyncio.sleep(0.01)
-        
 
     async def teardown(self):
         return await super().teardown()

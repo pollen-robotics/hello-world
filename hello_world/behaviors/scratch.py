@@ -131,7 +131,7 @@ class Scratch(Behavior):
             duration=1.0,
             interpolation_mode=InterpolationMode.MINIMUM_JERK
         )
- 
+
         look_back = self.reachy.head.look_at_async(
             0.5,
             0.0,

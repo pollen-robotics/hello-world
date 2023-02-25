@@ -576,7 +576,7 @@ class Whistle(Behavior):
         for j in self.reachy.l_arm.joints.values():
             j.torque_limit = 100.0
 
-        arm_move = ArmRythm(name = 'arm_move', reachy = self.reachy)
+        arm_move = ArmRythm(name='arm_move', reachy=self.reachy)
         await arm_move.start()
 
         await self.reachy.head.look_at_async(0.5, 0.0, 0.0, 1.0)
@@ -643,4 +643,3 @@ class ArmRythm(Behavior):
 
     async def teardown(self):
         return await super().teardown()
-
