@@ -32,7 +32,7 @@ Each new behavior should inherite from the Behavior class.
 It should as well define at least the __init__, calling the super().__init__ inherited from the Behavior class, an async run function and an async teardown, calling the inheritied super().teardown function of Behavior.
 A prototype is shown below:
 
-```
+```python
 class NewBehavior(Behavior):
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
         super().__init__(name, reachy, sub_behavior=sub_behavior)
@@ -57,7 +57,7 @@ class NewBehavior(Behavior):
 
 In order to have your behavior called in the idle function, you should then add an entry for your function in the behaviors dictionary of the Idle class:
 in `hello_world/behaviors/idle.py`, setting sub_behavior to True:  
-```
+```python
 class Idle(Behavior):
     """Idle class."""
 
