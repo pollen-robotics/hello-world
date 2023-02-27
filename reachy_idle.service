@@ -2,7 +2,7 @@
 Description=Reachy Idle service
 
 [Service]
-ExecStart=/usr/bin/bash /home/pierre/dev/hello-world/launch.bash
+ExecStart=/usr/bin/bash /home/reachy/dev/hello-world/launch.bash
 
 [Install]
 WantedBy=default.target
