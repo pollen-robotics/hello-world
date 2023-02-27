@@ -1,3 +1,4 @@
+"""Implement the Breathing behavior where Reachy discreetly swings its arms at a given frequency."""
 import asyncio
 import time
 
@@ -18,6 +19,7 @@ class ArmBreathing(Behavior):
     Uses: right_arm, left_arm
     Dependencies to other behaviors: none
     """
+
     def __init__(
             self,
             name: str,
@@ -26,11 +28,13 @@ class ArmBreathing(Behavior):
             fundamental_frequency: float = 0.3,
             phase: float = 0
             ) -> None:
+        """Initialize the ArmBreathing behavior."""
         super().__init__(name, reachy, sub_behavior=sub_behavior)
         self.fundamental_frequency = fundamental_frequency
         self.phase = phase
 
     async def run(self):
+        """Implement the behavior."""
         for j in self.reachy.r_arm.joints.values():
             j.torque_limit = 100.0
 
@@ -76,4 +80,5 @@ class ArmBreathing(Behavior):
             await asyncio.sleep(0.01)
 
     async def teardown(self):
+        """Use the teardown method from parent class."""
         return await super().teardown()

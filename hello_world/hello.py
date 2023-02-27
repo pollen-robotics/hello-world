@@ -27,6 +27,7 @@ if __name__ == '__main__':
     idle = Idle(name='idle', reachy=reachy)
 
     async def behavior():
+        """Need to define async function to run the behaviors asynchronously in main."""
         idle_behav = await idle.start()
         await idle_behav
 

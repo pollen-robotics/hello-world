@@ -25,6 +25,7 @@ class Asleep(Behavior):
     """
 
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        """Initialize the Asleep behavior."""
         super().__init__(name, reachy=reachy, sub_behavior=sub_behavior)
         self.left_pos = [0, 0, 0, 0, 0, 0, 0]
         self.right_pos = [0, 0, 0, 0, 0, 0, 0]
@@ -37,6 +38,7 @@ class Asleep(Behavior):
         self.playsIsOk2 = False
 
     async def run(self):
+        """Implement the behavior."""
         self.reachy.turn_on('reachy')
 
         breathing = ArmBreathing(name='arm_breathing', reachy=self.reachy, fundamental_frequency=0.3, phase=-np.pi/4)

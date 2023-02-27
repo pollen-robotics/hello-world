@@ -18,6 +18,7 @@ class Idle(Behavior):
     """Idle class."""
 
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        """Initialize the behavior."""
         super().__init__(name, reachy=reachy, sub_behavior=sub_behavior)
 
         logging.basicConfig(level=logging.INFO)
@@ -37,6 +38,7 @@ class Idle(Behavior):
         }
 
     async def run(self):
+        """Implement the behavior."""
         while True:
             asleep = await self.asleep_behavior.start()
             self._logger.info('Playing asleep behavior.')
@@ -48,4 +50,5 @@ class Idle(Behavior):
             await self.behaviors[random_sub_behavior]._run()
 
     async def teardown(self):
+        """Put Reachy's motor in compliant mode when the Idle behavior stops."""
         self.reachy.turn_off_smoothly('reachy')

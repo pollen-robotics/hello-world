@@ -1,3 +1,5 @@
+"""Setup config file."""
+
 from setuptools import setup, find_packages
 from os import path
 import io

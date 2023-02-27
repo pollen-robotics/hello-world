@@ -1,3 +1,4 @@
+"""Implement scratch behavior where Reachy use its left arm to scratch its right forearm."""
 import asyncio
 import numpy as np
 
@@ -15,7 +16,9 @@ class Scratch(Behavior):
     Uses: right_arm, left_arm, head
     Dependencies to other behaviors: none
     """
+
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        """Initialize the behavior."""
         super().__init__(name, reachy, sub_behavior=sub_behavior)
 
         self.scratch_arm = np.load('movements/scratch.npy')
@@ -41,6 +44,7 @@ class Scratch(Behavior):
         ]
 
     async def run(self):
+        """Implement the Scratch behavior."""
         for j in self.reachy.r_arm.joints.values():
             j.torque_limit = 100.0
         for j in self.reachy.l_arm.joints.values():
@@ -163,4 +167,5 @@ class Scratch(Behavior):
         self.reachy.turn_off_smoothly('l_arm')
 
     async def teardown(self):
+        """Use the teardown method from parent class."""
         return await super().teardown()

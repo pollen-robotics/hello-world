@@ -1,3 +1,4 @@
+"""Implement sound player tools."""
 from threading import Thread
 
 from playsound import playsound as _playsound

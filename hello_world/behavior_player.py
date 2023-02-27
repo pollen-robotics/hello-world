@@ -1,8 +1,22 @@
 """
+behavior_player script to run recorded behaviors for Reachy.
+
 In this script, we show how to play on Reachy one of the behavior developed for the hello-world
 application. The goal is to easily visualize the behavior without having to run the application,
 which plays behaviors randomly.
 This script might also be used to test behaviors that you have implemented yourself.
+
+ Args:
+    - behavior: Reachy's recorded behavior that you want to play,
+    - --ip_address: ip_address of the robot. Default is 'localhost'.
+
+To call this script:
+    cd ~/dev/hello-world
+    python3 -m hello_world.behavior_player behavior_you_want --ip_address ip_of_your_reachy
+
+For example, to run the 'asleep' behavior on the robot with IP 192.168.1.28
+
+    python3 -m hello_world.behavior_player asleep --ip_address 192.168.1.28
 """
 import asyncio
 from grpc._channel import _InactiveRpcError
@@ -14,6 +28,7 @@ from .behaviors.scratch import Scratch
 
 
 def main():
+    """Load the requested behavior and play it on Reachy."""
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument(

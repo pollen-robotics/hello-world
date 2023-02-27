@@ -23,6 +23,7 @@ class LookHand(Behavior):
     """
 
     async def run(self):
+        """Implement the LookHand behavior."""
         for j in self.reachy.r_arm.joints.values():
             j.torque_limit = 100.0
 

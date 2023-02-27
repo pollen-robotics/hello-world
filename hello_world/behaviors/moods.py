@@ -25,7 +25,7 @@ class Lonely(Behavior):
     """
 
     async def run(self):
-
+        """Implement the behavior."""
         traj_antennas = goto_async(
             goal_positions={
                 self.reachy.head.r_antenna: -65,
@@ -185,6 +185,7 @@ class Tshirt(Behavior):
     """
 
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        """Initialize the Tshirt behavior."""
         super().__init__(name, reachy, sub_behavior=sub_behavior)
 
         self.touch_tshirt = np.load('movements/traj_tshirt.npy')
@@ -203,6 +204,7 @@ class Tshirt(Behavior):
         ]
 
     async def run(self):
+        """Implement the behavior."""
         for j in self.reachy.l_arm.joints.values():
             j.torque_limit = 100.0
 
@@ -262,6 +264,7 @@ class Tshirt(Behavior):
         await asyncio.sleep(0.3)
 
     async def teardown(self):
+        """Use the teardown method from parent class."""
         return await super().teardown()
 
 
@@ -276,6 +279,7 @@ class SweatHead(Behavior):
     """
 
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        """Initialize the SweatHead behavior."""
         super().__init__(name, reachy, sub_behavior=sub_behavior)
 
         self.sweat_head = np.load('movements/sweat_head.npy')
@@ -293,6 +297,7 @@ class SweatHead(Behavior):
         ]
 
     async def run(self):
+        """Implement the behavior."""
         for j in self.reachy.r_arm.joints.values():
             j.torque_limit = 0.0
 
@@ -375,6 +380,7 @@ class SweatHead(Behavior):
             j.compliant = True
 
     async def teardown(self):
+        """Use the teardown method from parent class."""
         return await super().teardown()
 
 
@@ -387,7 +393,9 @@ class Hello(Behavior):
     Uses: left_arm, head
     Dependencies to other behaviors: none
     """
+
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        """Initialize the Hello behavior."""
         super().__init__(name, reachy, sub_behavior=sub_behavior)
 
         self.move_antennas = np.load('movements/hello_move_antennas.npy')
@@ -411,6 +419,7 @@ class Hello(Behavior):
         ]
 
     async def run(self):
+        """Implement the behavior."""
         for j in self.reachy.r_arm.joints.values():
             j.torque_limit = 0.0
 
@@ -466,6 +475,7 @@ class Hello(Behavior):
         self.reachy.turn_off_smoothly('l_arm')
 
     async def teardown(self):
+        """Use the teardown method from parent class."""
         return await super().teardown()
 
 
@@ -480,11 +490,13 @@ class Sneeze(Behavior):
     """
 
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        """Initialize the Sneeze behavior."""
         super().__init__(name, reachy, sub_behavior=sub_behavior)
 
         self.sneeze_sound = 'sounds/sneezing.wav'
 
     async def run(self):
+        """Implement the behavior."""
         for j in self.reachy.r_arm.joints.values():
             j.torque_limit = 0.0
 
@@ -523,6 +535,7 @@ class Sneeze(Behavior):
         )
 
     async def teardown(self):
+        """Use the teardown method from parent class."""
         return await super().teardown()
 
 
@@ -537,6 +550,7 @@ class Whistle(Behavior):
     """
 
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        """Initialize the Whistle behavior."""
         super().__init__(name, reachy, sub_behavior=sub_behavior)
 
         self.whistle_sound = 'sounds/whistling.wav'
@@ -569,7 +583,7 @@ class Whistle(Behavior):
         ]
 
     async def run(self):
-
+        """Implement the behavior."""
         for j in self.reachy.r_arm.joints.values():
             j.torque_limit = 0.0
 
@@ -597,6 +611,7 @@ class Whistle(Behavior):
         await arm_move.stop()
 
     async def teardown(self):
+        """Use the teardown method from parent class."""
         return await super().teardown()
 
 
@@ -609,7 +624,9 @@ class ArmRythm(Behavior):
     Uses: right_arm, left_arm
     Dependencies to other behaviors: none
     """
+
     def __init__(self, name: str, reachy, sub_behavior: bool = False) -> None:
+        """Initialize the ArmRythm behavior."""
         super().__init__(name, reachy, sub_behavior=sub_behavior)
 
         self.arm_movement = np.load('movements/whistle_arms.npy')
@@ -634,7 +651,7 @@ class ArmRythm(Behavior):
         ]
 
     async def run(self):
-
+        """Implement the behavior."""
         for jp_arm in self.arm_movement:
             for joint, pos in zip(self.recorded_joints, jp_arm):
                 joint.goal_position = pos
@@ -642,4 +659,5 @@ class ArmRythm(Behavior):
             await asyncio.sleep(1 / self.sampling_frequency)
 
     async def teardown(self):
+        """Use the teardown method from parent class."""
         return await super().teardown()
