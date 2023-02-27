@@ -20,7 +20,7 @@ setup(
     packages=find_packages(exclude=['tests']),
     python_requires='>=3.5',
     install_requires=[
-        'reachy-sdk',
+        'reachy-sdk==0.5.4',
         'numpy',
         'playsound',
     ],
