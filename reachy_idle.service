@@ -1,8 +1,0 @@
-[Unit]
-Description=Reachy Idle service
-
-[Service]
-ExecStart=/usr/bin/bash /home/pierre/dev/hello-world/launch.bash
-
-[Install]
-WantedBy=default.target
