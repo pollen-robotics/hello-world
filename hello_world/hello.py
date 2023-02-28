@@ -15,8 +15,11 @@ from .behaviors.idle import Idle
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
+REACHY_IP = 'localhost'
+
+
 if __name__ == '__main__':
-    reachy = ReachySDK(host='localhost')
+    reachy = ReachySDK(host=REACHY_IP)
     logger.info('Connected to Reachy')
 
     # Make sure that the torque are correctly set at 100, in case
