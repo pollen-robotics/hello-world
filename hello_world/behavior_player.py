@@ -93,6 +93,8 @@ Make sure that reachy_sdk_server.service is running and that you entered the cor
             reachy.turn_off_smoothly('l_arm')
         if not reachy.r_arm.r_shoulder_pitch.compliant:
             reachy.turn_off_smoothly('r_arm')
+        if not reachy.head.r_antenna.compliant:
+            reachy.turn_off_smoothly('head')
 
     except KeyboardInterrupt:
         print(f'Ctrl-C received, stopping the {requested_behavior} behavior...')
